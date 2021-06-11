@@ -24,16 +24,15 @@ public class CamelRouter extends RouteBuilder {
                 .apiProperty("api.path", "/")
                 .apiProperty("host", "")
                 .apiContextRouteId("doc-api")
-            .component("servlet")
-            .bindingMode(RestBindingMode.json);
+            .component("servlet");
         
         rest("/save/file").description("Save File in Filesystem")
             .get("/pdf").route().routeId("save-file-api")
-                .to("direct:save-file");
+            .consumes("text/plain").produces("text/html")
+            .to("direct:save-file");
 
         from("direct:save-file").description("Save File as PDF")
-            .streamCaching()
-            .to("file://files/out/pdf");     
+            .to("file://files/out/pdf?fileName=sampleFile.pdf&charset=utf-8&tempPrefix=/../filesInProgress/");
     }
 
 }
